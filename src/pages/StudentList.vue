@@ -1,15 +1,17 @@
 <template>
   <div>
     <h2>Danh sách học sinh</h2>
-
     <div style="margin-bottom: 10px;">
+      <label>Lớp:</label>
       <select v-model="selectedClass">
         <option value="">-- Tất cả --</option>
-        <option v-for="classItem in CLASS_LIST" :key="classItem" :value="classItem">
-          {{ classItem }}
-        </option>
+        <option v-for="classItem in CLASS_LIST" :key="classItem" :value="classItem">{{ classItem }}</option>
       </select>
-      <button @click="onSearch">Tìm kiếm</button>
+      <label style="margin-left: 20px;">Tên:</label>
+      <input v-model="nameKeyword" placeholder="Nhập tên" />
+      <label style="margin-left: 20px;">Tuổi:</label>
+      <input v-model.number="ageFilter" type="number" placeholder="Nhập tuổi" />
+      <button style="margin-left: 20px;" @click="onSearch">Tìm kiếm</button>
     </div>
 
     <button @click="goToCreate">Thêm học sinh</button>
@@ -33,7 +35,6 @@
     </table>
 
     <Pagination :currentPage="currentPage" :totalPages="totalPages" @prev="prevPage" @next="nextPage" />
-
     <div v-if="message" style="color: green; margin-top: 10px;">{{ message }}</div>
   </div>
 </template>
@@ -44,9 +45,8 @@ import { useStudentList } from '../composables/useStudentList';
 import Pagination from '../components/Pagination.vue';
 
 const {
-  paginatedStudents, currentPage, totalPages, selectedClass,
-  deleteStudent, editStudent, goToCreate, prevPage, nextPage,
-  applyFilter, message
+  paginatedStudents, currentPage, totalPages, selectedClass, nameKeyword, ageFilter,
+  deleteStudent, editStudent, goToCreate, prevPage, nextPage, applyFilter, message
 } = useStudentList();
 
 function onSearch() {

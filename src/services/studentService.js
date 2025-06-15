@@ -36,10 +36,4 @@ function getStudentById(id) {
   return students.find(s => s.id === id);
 }
 
-export default {
-  getAllStudents,
-  addStudent,
-  updateStudent,
-  deleteStudent,
-  getStudentById,
-};
+export default { getAllStudents, addStudent, updateStudent, deleteStudent, getStudentById };

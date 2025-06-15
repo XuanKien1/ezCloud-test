@@ -1,5 +1,6 @@
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import studentService from '../services/studentService';
 import { useStudentListActions } from '../actions/studentListActions';
 
 export function useStudentList() {
@@ -7,12 +8,15 @@ export function useStudentList() {
   const students = ref([]);
   const filteredStudents = ref([]);
   const selectedClass = ref('');
+  const nameKeyword = ref('');
+  const ageFilter = ref(null);
   const pageSize = 5;
   const currentPage = ref(1);
   const message = ref('');
 
-  const { loadStudents, applyFilter, deleteStudent } =
-    useStudentListActions(students, filteredStudents, selectedClass, currentPage, message);
+  const { loadStudents, applyFilter, deleteStudent } = useStudentListActions(
+    students, filteredStudents, selectedClass, nameKeyword, ageFilter, currentPage, message
+  );
 
   const totalPages = computed(() => Math.ceil(filteredStudents.value.length / pageSize));
   const paginatedStudents = computed(() => {
@@ -29,7 +33,7 @@ export function useStudentList() {
 
   return {
     paginatedStudents, currentPage, totalPages, selectedClass,
-    deleteStudent, editStudent, goToCreate, prevPage, nextPage,
-    applyFilter, message
+    nameKeyword, ageFilter, deleteStudent, editStudent, goToCreate,
+    prevPage, nextPage, applyFilter, message
   };
 }
