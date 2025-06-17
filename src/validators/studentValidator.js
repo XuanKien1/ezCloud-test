@@ -1,19 +1,21 @@
-import { CLASS_LIST } from '../constants/classes';
-import { calculateAge } from '../utils/dateUtils';
+import classService from '../services/classService';
 
 export function validateStudent(student) {
   const errors = {};
-  if (!student.name) errors.name = 'Vui lòng nhập họ và tên';
-  else if (/\d/.test(student.name)) errors.name = 'Họ và tên không được chứa số';
-  if (!student.birthday) errors.birthday = 'Vui lòng chọn ngày sinh';
-  else {
-    const birthday = new Date(student.birthday);
-    const now = new Date();
-    if (birthday > now) errors.birthday = 'Ngày sinh không hợp lệ';
-    const age = calculateAge(student.birthday);
-    if (age > 100) errors.birthday = 'Tuổi không hợp lệ';
+  const classOptions = classService.getAllClasses().map(c => `${c.parent}${c.name}`);
+
+  if (!student.name) errors.name = 'Vui lòng nhập họ tên';
+  if (!student.birthDate) errors.birthDate = 'Vui lòng nhập ngày sinh';
+  if (!student.className) {
+    errors.className = 'Lớp không tồn tại';
+  } else if (!classOptions.includes(student.className)) {
+    errors.className = 'Lớp không tồn tại';
   }
-  if (!student.class) errors.class = 'Vui lòng chọn lớp';
-  else if (!CLASS_LIST.includes(student.class)) errors.class = 'Lớp không hợp lệ';
+
+  const birthYear = new Date(student.birthDate).getFullYear();
+  const currentYear = new Date().getFullYear();
+  student.age = currentYear - birthYear;
+  if (student.age < 0) errors.birthDate = 'Ngày sinh không hợp lệ';
+
   return errors;
 }

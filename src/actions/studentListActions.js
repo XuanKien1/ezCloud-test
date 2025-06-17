@@ -1,23 +1,24 @@
 import studentService from '../services/studentService';
-import { sortByClassOrder } from '../utils/sortUtils';
 
-export function useStudentListActions(students, filteredStudents, selectedClass, nameKeyword, ageFilter, currentPage, message) {
+export function useStudentListActions(students, filteredStudents, selectedClass, searchName, searchAge, currentPage, message) {
   function loadStudents() {
     students.value = studentService.getAllStudents();
     applyFilter();
   }
+
   function applyFilter() {
     let data = [...students.value];
-    if (selectedClass.value) data = data.filter(s => s.class === selectedClass.value);
-    if (nameKeyword.value) {
-      const keyword = nameKeyword.value.toLowerCase();
-      data = data.filter(s => s.name.toLowerCase().includes(keyword));
-    }
-    if (ageFilter.value) data = data.filter(s => s.age === ageFilter.value);
-    data.sort(sortByClassOrder);
+    if (selectedClass.value)
+      data = data.filter(s => s.className === selectedClass.value);
+    if (searchName.value)
+      data = data.filter(s => s.name.toLowerCase().includes(searchName.value.toLowerCase()));
+    if (searchAge.value)
+      data = data.filter(s => s.age == searchAge.value);
     filteredStudents.value = data;
-    if (currentPage.value > totalPages()) currentPage.value = totalPages() || 1;
+    if (currentPage.value > totalPages())
+      currentPage.value = totalPages() || 1;
   }
+
   function deleteStudent(id) {
     if (confirm('Bạn có chắc muốn xoá?')) {
       studentService.deleteStudent(id);
@@ -25,8 +26,10 @@ export function useStudentListActions(students, filteredStudents, selectedClass,
       message.value = 'Xoá học sinh thành công!';
     }
   }
+
   function totalPages() {
     return Math.ceil(filteredStudents.value.length / 5);
   }
+
   return { loadStudents, applyFilter, deleteStudent };
 }

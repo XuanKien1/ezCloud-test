@@ -1,26 +1,43 @@
 <template>
   <div>
     <h2>{{ isEdit ? 'Sửa học sinh' : 'Thêm học sinh' }}</h2>
-
     <form @submit.prevent="saveStudent">
-      <InputText v-model="student.name" label="Họ và tên" :error="errors.name" />
-      <InputDate v-model="student.birthday" label="Ngày sinh" :error="errors.birthday" :max="today" />
-      <SelectClass v-model="student.class" label="Lớp" :error="errors.class" :classList="CLASS_LIST" />
-      <button type="submit">Lưu</button>
-    </form>
+      <div>
+        <label>Họ tên:</label>
+        <input v-model="student.name" />
+        <span style="color:red">{{ errors.name }}</span>
+      </div>
 
-    <div v-if="message" style="color: green; margin-top: 10px;">
-      {{ message }}
-    </div>
+      <div>
+        <label>Ngày sinh:</label>
+        <input v-model="student.birthDate" type="date" />
+        <span style="color:red">{{ errors.birthDate }}</span>
+      </div>
+
+      <div style="position: relative;">
+        <label>Lớp:</label>
+        <input v-model="searchClass" @input="filterClassOptions" @focus="showDropdown = true" placeholder="Nhập lớp cần tìm" />
+        <ul v-if="showDropdown && filteredClassOptions.length" style="position:absolute; border:1px solid #ccc; width:200px; max-height:150px; overflow:auto; background:white; z-index:10; padding:0; margin:0;">
+          <li v-for="cls in filteredClassOptions" :key="cls"
+              style="list-style:none; padding:5px; cursor:pointer;"
+              @click="selectClass(cls)">
+            {{ cls }}
+          </li>
+        </ul>
+        <span style="color:red">{{ errors.className }}</span>
+      </div>
+
+      <button type="submit">Lưu</button>
+      <div v-if="message" style="color:green">{{ message }}</div>
+    </form>
   </div>
 </template>
 
 <script setup>
 import { useStudentForm } from '../composables/useStudentForm';
-import { CLASS_LIST } from '../constants/classes';
-import InputText from '../components/inputs/InputText.vue';
-import InputDate from '../components/inputs/InputDate.vue';
-import SelectClass from '../components/inputs/SelectClass.vue';
-
-const { student, errors, today, saveStudent, isEdit, message } = useStudentForm();
+const {
+  student, errors, saveStudent, message, isEdit,
+  searchClass, filteredClassOptions, filterClassOptions,
+  showDropdown, selectClass
+} = useStudentForm();
 </script>
