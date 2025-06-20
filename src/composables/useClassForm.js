@@ -6,7 +6,7 @@ import { useClassFormActions } from '../actions/classFormActions';
 export function useClassForm() {
   const router = useRouter();
   const route = useRoute();
-  const cls = ref({ name: '', parent: '' });
+  const cls = ref({ id: '', name: '', parent: '' });
   const errors = ref({});
   const isEdit = ref(false);
   const message = ref('');
@@ -15,6 +15,7 @@ export function useClassForm() {
     if (route.params.id) {
       const data = classService.getClassById(route.params.id);
       if (data) {
+        console.log('✅ Lấy dữ liệu lớp cần sửa:', data);
         cls.value = { ...data };
         isEdit.value = true;
       }

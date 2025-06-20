@@ -1,6 +1,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStudentListActions } from '../actions/studentListActions';
+import { classSort } from '../utils/sortUtils'; // ✅ import hàm sắp xếp
 
 export function useStudentList() {
   const router = useRouter();
@@ -31,8 +32,17 @@ export function useStudentList() {
 
   onMounted(loadStudents);
 
+  function applyFilterWithSort() {
+    applyFilter();
+    filteredStudents.value.sort(classSort);
+  }
+
   return {
-    paginatedStudents, currentPage, totalPages, selectedClass, searchName, searchAge,
-    deleteStudent, editStudent, goToCreate, prevPage, nextPage, applyFilter, message
+    paginatedStudents, currentPage, totalPages,
+    selectedClass, searchName, searchAge,
+    deleteStudent, editStudent, goToCreate,
+    prevPage, nextPage,
+    applyFilter: applyFilterWithSort, // ✅ dùng phiên bản có sắp xếp
+    message
   };
 }

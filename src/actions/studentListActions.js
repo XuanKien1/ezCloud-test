@@ -1,4 +1,5 @@
 import studentService from '../services/studentService';
+import { classSort } from '../utils/sortUtils'; // ✅ import hàm sắp xếp
 
 export function useStudentListActions(students, filteredStudents, selectedClass, searchName, searchAge, currentPage, message) {
   function loadStudents() {
@@ -8,12 +9,16 @@ export function useStudentListActions(students, filteredStudents, selectedClass,
 
   function applyFilter() {
     let data = [...students.value];
+
     if (selectedClass.value)
       data = data.filter(s => s.className === selectedClass.value);
     if (searchName.value)
       data = data.filter(s => s.name.toLowerCase().includes(searchName.value.toLowerCase()));
     if (searchAge.value)
       data = data.filter(s => s.age == searchAge.value);
+
+    data.sort(classSort);
+
     filteredStudents.value = data;
     if (currentPage.value > totalPages())
       currentPage.value = totalPages() || 1;

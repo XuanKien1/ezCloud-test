@@ -1,43 +1,66 @@
 <template>
   <div>
     <h2>{{ isEdit ? 'Sửa học sinh' : 'Thêm học sinh' }}</h2>
-    <form @submit.prevent="saveStudent">
-      <div>
-        <label>Họ tên:</label>
-        <input v-model="student.name" />
-        <span style="color:red">{{ errors.name }}</span>
-      </div>
 
-      <div>
-        <label>Ngày sinh:</label>
-        <input v-model="student.birthDate" type="date" />
-        <span style="color:red">{{ errors.birthDate }}</span>
-      </div>
+    <label>Họ tên:</label>
+    <input v-model="student.name" type="text" />
+    <p v-if="errors.name" style="color: red">{{ errors.name }}</p>
 
-      <div style="position: relative;">
-        <label>Lớp:</label>
-        <input v-model="searchClass" @input="filterClassOptions" @focus="showDropdown = true" placeholder="Nhập lớp cần tìm" />
-        <ul v-if="showDropdown && filteredClassOptions.length" style="position:absolute; border:1px solid #ccc; width:200px; max-height:150px; overflow:auto; background:white; z-index:10; padding:0; margin:0;">
-          <li v-for="cls in filteredClassOptions" :key="cls"
-              style="list-style:none; padding:5px; cursor:pointer;"
-              @click="selectClass(cls)">
-            {{ cls }}
-          </li>
-        </ul>
-        <span style="color:red">{{ errors.className }}</span>
-      </div>
+    <label>Ngày sinh:</label>
+    <input v-model="student.birthDate" type="date" />
+    <p v-if="errors.birthDate" style="color: red">{{ errors.birthDate }}</p>
 
-      <button type="submit">Lưu</button>
-      <div v-if="message" style="color:green">{{ message }}</div>
-    </form>
+    <label>Lớp:</label>
+    <input
+      v-model="searchClass"
+      @input="filterClassOptions"
+      @focus="showDropdown = true"
+      @blur="handleBlur"
+    />
+    <ul
+      v-if="showDropdown"
+      style="border: 1px solid #ccc; max-height: 150px; overflow-y: auto; margin: 0; padding: 0;"
+    >
+      <li
+        v-for="cls in filteredClassOptions"
+        :key="cls"
+        @click="selectClass(cls)"
+        style="padding: 4px; cursor: pointer;"
+      >
+        {{ cls }}
+      </li>
+    </ul>
+    <p v-if="errors.className" style="color: red">{{ errors.className }}</p>
+
+    <button @click="handleSave">Lưu</button>
+    <p v-if="message" style="color: green">{{ message }}</p>
   </div>
 </template>
 
 <script setup>
 import { useStudentForm } from '../composables/useStudentForm';
+
 const {
-  student, errors, saveStudent, message, isEdit,
-  searchClass, filteredClassOptions, filterClassOptions,
-  showDropdown, selectClass
+  student,
+  errors,
+  saveStudent,
+  message,
+  isEdit,
+  searchClass,
+  filteredClassOptions,
+  filterClassOptions,
+  showDropdown,
+  selectClass
 } = useStudentForm();
+
+function handleBlur() {
+  setTimeout(() => {
+    showDropdown.value = false;
+  }, 200);
+}
+
+function handleSave() {
+  student.value.className = searchClass.value;
+  saveStudent();
+}
 </script>
